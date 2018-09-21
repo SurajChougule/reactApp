@@ -1,51 +1,62 @@
 import React from 'react';
 import ListRow from './listRow';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as listActions from '../../actions/listActions'; 
+import propTypes from 'prop-types';
 
 class List extends React.Component {
   constructor(props){
     super(props);
-    this.state={
-      lists: []
-    }
-    this.getCount = this.getCount.bind(this)
   }
 
   componentDidMount(){
-    fetch('https://jsonplaceholder.typicode.com/users')
-    .then(response => response.json())
-    .then(response => {
-      let users = response && response.map(item => {
-        item.count = 0;
-        return item;
-      });
-      this.setState({lists: users});
-    });
+    this.props.listActions.getUsers();
   }
 
+  // getCount (count, id){
+  //   const lists = this.state && this.state.list;
 
-  getCount (count, id){
-    const lists = this.state && this.state.lists;
-
-    let items = lists && lists.map(element => {
-      if (element.id === id) {
-        element.count = count;
-      }
-      return element;
-    });
-    this.setState({lists: items});
-  }
+  //   let items = lists && lists.map(element => {
+  //     if (element.id === id) {
+  //       element.count = count;
+  //     }
+  //     return element;
+  //   });
+  // }
 
   render() {
-    let users = this.state.lists;
+    let users = this.props.users;
     
     return (
       <ul>
         {users && users.map((item, index)=> {
-          return <ListRow data={item} key={index} getCount={this.getCount} count={item.count} />
+          return <ListRow data={item} key={index} getCount={this.props.listActions.getCount} count={item.count} />
         })}
       </ul>
     );
   }
 }
 
-export default List;
+List.propTypes = {
+  users: propTypes.array,
+  listActions: propTypes.object   
+};
+
+
+function mapStateToProps(state){
+  return {
+    users: state.Users.list
+  };
+}
+
+function mapDispatchToProps(dispatch){
+  return {
+    listActions: bindActionCreators(listActions, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(List);

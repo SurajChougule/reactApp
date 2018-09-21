@@ -1,9 +1,7 @@
 import React from 'react';
+import propTypes from 'prop-types';
 
 class ListRow extends React.Component {
-  constructor(props){
-    super(props);
-  }
 
   render(){
     const data = this.props.data;
@@ -20,5 +18,10 @@ class ListRow extends React.Component {
     );
   }
 }
+
+ListRow.propTypes ={
+  data: propTypes.object,
+  getCount: propTypes.func
+};
 
 export default ListRow;
